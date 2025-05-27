@@ -42,5 +42,8 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    define: {
+      'import.meta.env.VITE_PROJECT_NAME': JSON.stringify(env.VITE_PROJECT_NAME),
+    }
   };
 });
