@@ -16,8 +16,8 @@ async function downloadData() {
     credentials: serviceAccountKey,
   });
   const bucketName = process.env.VITE_GCLOUD_BUCKET;
-  const srcFilename = 'article_data.json';
-  const destPath = path.join(__dirname, 'data', 'content.json');
+  const srcFilename = 'transformed_data.json';
+  const destPath = path.join(__dirname, 'data', 'transformed_data.json');
 
   await storage.bucket(bucketName).file(srcFilename).download({ destination: destPath });
   console.log(`Downloaded ${srcFilename} to ${destPath}.`);
