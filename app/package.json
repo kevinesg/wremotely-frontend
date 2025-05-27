@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "node prebuild.js && npm run build"
   },
   "dependencies": {
     "@mui/material": "^7.1.0",
