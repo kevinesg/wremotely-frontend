@@ -4,6 +4,7 @@ import { mapJobToPost } from "@/lib/utils";
 import type { JobData } from "@/lib/types";
 import { Post } from "@/components/Post";
 import Fuse from "fuse.js";
+import jobsData from "../../data/transformed_data.json"; // adjust path as needed
 
 const PAGE_SIZE = 12;
 
@@ -21,16 +22,14 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    fetch("/data/transformed_data.json")
-      .then((res) => res.json())
-      .then((data) => {
-        data.sort(
-          (a: JobData, b: JobData) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-        setJobs(data);
-        setLoading(false);
-      });
+    // No need to fetch, just use the imported data
+    const data = jobsData as JobData[];
+    data.sort(
+      (a: JobData, b: JobData) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    setJobs(data);
+    setLoading(false);
   }, []);
 
   // Set up Fuse.js for fuzzy search
