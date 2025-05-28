@@ -1,11 +1,10 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import type { JobData } from "@/lib/types"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import type { JobData } from "@/lib/types";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-
 
 function stripHtml(html: string): string {
   if (!html) return "";
@@ -18,21 +17,29 @@ function truncate(text: string, maxLength: number): string {
   return text.slice(0, maxLength).trimEnd() + "…";
 }
 
-
 export function mapJobToPost(job: JobData) {
-  const plainDescription = truncate(stripHtml(job.job_description), 280);
+  const plainDescription = truncate(stripHtml(job.description), 280);
+
+  // Salary logic: show as range if both, else just min or max (no $ sign, no hyphen if only min)
+  let salary: string | undefined;
+  if (job.salary_min && job.salary_max) {
+    salary = `${job.salary_min} – ${job.salary_max}`;
+  } else if (job.salary_min) {
+    salary = job.salary_min;
+  } else if (job.salary_max) {
+    salary = job.salary_max;
+  }
+
   return {
     title: job.job_title,
     company: job.company_name,
-    location: job.required_location?.join(", ") || "",
-    salary:
-      job.salary_min && job.salary_max
-        ? `$${job.salary_min}–$${job.salary_max}`
-        : job.salary_min
-        ? `$${job.salary_min}+`
-        : undefined,
+    location: Array.isArray(job.required_location)
+      ? job.required_location.join(", ")
+      : job.required_location || "",
+    salary,
+    tags: job.tags,
     description: plainDescription,
     applyUrl: job.apply_url || job.url,
-    createdAt: job.created_at,
+    createdAt: job._created_at,
   };
 }
