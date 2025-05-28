@@ -4,8 +4,7 @@ import { mapJobToPost } from "@/lib/utils";
 import type { JobData } from "@/lib/types";
 import { Post } from "@/components/Post";
 import Fuse from "fuse.js";
-import jobsData from "../../data/transformed_data.json"; // adjust path as needed
-import { formatDistanceToNow } from "date-fns";
+import jobsData from "../../data/transformed_data.json";
 
 const PAGE_SIZE = 12;
 
