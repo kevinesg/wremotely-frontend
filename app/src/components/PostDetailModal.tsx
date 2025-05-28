@@ -60,8 +60,8 @@ export function PostDetailModal({
   if (!job && !isClosing) return null;
 
   // Compute timeAgo for modal
-  const timeAgo = job?.created_at
-    ? formatDistanceToNow(new Date(job.created_at), { addSuffix: true })
+  const timeAgo = job?._created_at
+    ? formatDistanceToNow(new Date(job._created_at), { addSuffix: true })
     : undefined;
 
   return (
@@ -105,13 +105,18 @@ export function PostDetailModal({
           </button>
           <h2 className="text-2xl font-bold mb-1">{job?.job_title}</h2>
           <div className="mb-2 text-[var(--muted-foreground)]">
-            {job?.company_name} &mdash; {job?.required_location?.join(", ")}
+            {job?.company_name} &mdash;{" "}
+            {Array.isArray(job?.required_location)
+              ? job.required_location.join(", ")
+              : job?.required_location}
           </div>
           <div className="mb-2 font-semibold text-green-700 dark:text-green-400">
             {job?.salary_min && job?.salary_max
-              ? `$${job.salary_min}–$${job.salary_max}`
+              ? `${job.salary_min}–${job.salary_max}`
               : job?.salary_min
-              ? `$${job.salary_min}+`
+              ? job.salary_min
+              : job?.salary_max
+              ? job.salary_max
               : null}
           </div>
           {timeAgo && (
@@ -127,14 +132,26 @@ export function PostDetailModal({
         >
           <div
             className="prose prose-sm max-w-none dark:prose-invert mb-4"
-            dangerouslySetInnerHTML={{ __html: job?.job_description || "" }}
+            dangerouslySetInnerHTML={{ __html: job?.description || "" }}
           />
-          {job?.apply_url && (
+          {job?.tags && job.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {job.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-0.5 rounded bg-[var(--muted)] text-xs text-[var(--muted-foreground)] border border-[var(--border)]"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          {job?.url && (
             <a
-              href={job.apply_url}
+              href={job.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-4 py-2 rounded border border-[var(--border)] bg-[var(--accent)] text-[var(--accent-foreground)] hover:bg-[var(--accent-foreground)] hover:text-[var(--accent)] font-semibold transition-colors mb-16"
+              className="inline-block px-4 py-2 rounded border border-[var(--border)] bg-[var(--accent)] text-[var(--accent-foreground)] hover:bg-[var(--accent-foreground)] hover:text-[var(--accent)] font-semibold transition-colors mb-4 mt-4"
             >
               Apply Now
             </a>

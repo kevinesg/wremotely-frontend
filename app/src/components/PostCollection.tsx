@@ -5,6 +5,7 @@ import type { JobData } from "@/lib/types";
 import { Post } from "@/components/Post";
 import Fuse from "fuse.js";
 import jobsData from "../../data/transformed_data.json"; // adjust path as needed
+import { formatDistanceToNow } from "date-fns";
 
 const PAGE_SIZE = 12;
 
@@ -26,7 +27,7 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
     const data = jobsData as JobData[];
     data.sort(
       (a: JobData, b: JobData) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        new Date(b._created_at).getTime() - new Date(a._created_at).getTime()
     );
     setJobs(data);
     setLoading(false);
@@ -98,7 +99,12 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
               className="text-left focus-visible:outline-none hover:shadow-lg transition-shadow"
               aria-label={`Open ${job.job_title} details`}
             >
-              <Post job={mapJobToPost(job)} />
+              <Post
+                job={{
+                  ...mapJobToPost(job),
+                  createdAt: job._created_at, // pass createdAt for timeAgo
+                }}
+              />
             </button>
           ))}
         </div>

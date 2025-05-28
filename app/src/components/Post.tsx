@@ -1,6 +1,5 @@
 import {
   Card,
-  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -45,25 +44,37 @@ export function Post({ job }: JobPostCardProps) {
         <CardTitle>{job.title}</CardTitle>
         <CardDescription className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mt-2">
           <span className="font-medium">{job.company}</span>
-          <span className="text-xs text-[var(--muted-foreground)]">
+          <span
+            className="text-xs text-[var(--muted-foreground)] line-clamp-1"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "normal",
+            }}
+          >
             {job.location}
           </span>
         </CardDescription>
-        {job.salary && (
-          <div className="mt-1 text-sm font-semibold text-[var(--green-700)] dark:text-[var(--green-400)]">
+        {job.salary ? (
+          <div
+            className="mt-1 text-sm font-semibold text-[var(--green-700)] dark:text-[var(--green-400)] line-clamp-2"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            title={job.salary}
+          >
             {job.salary}
           </div>
-        )}
-        {job.tags && job.tags.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2">
-            {job.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-2 py-0.5 rounded bg-[var(--muted)] text-xs text-[var(--muted-foreground)] border border-[var(--border)]"
-              >
-                {tag}
-              </span>
-            ))}
+        ) : (
+          <div className="mt-1 text-sm font-semibold invisible select-none">
+            &nbsp;
           </div>
         )}
         {/* Show timeAgo */}
@@ -72,12 +83,44 @@ export function Post({ job }: JobPostCardProps) {
             {timeAgo}
           </div>
         )}
+        {/* Description preview */}
+        <div className="mt-2">
+          <p
+            className="text-sm text-[var(--foreground)] line-clamp-3"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {job.description}
+          </p>
+        </div>
+        {job.tags && job.tags.length > 0 && (
+          <div
+            className="mt-2 flex flex-wrap gap-2"
+            style={{
+              maxHeight: "55px", // ~3 rows for text-xs/py-0.5, adjust as needed
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            {job.tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-0.5 rounded bg-[var(--muted)] text-xs text-[var(--muted-foreground)] border border-[var(--border)]"
+              >
+                {tag}
+              </span>
+            ))}
+            {/* Removed gradient overlay */}
+          </div>
+        )}
       </CardHeader>
-      <CardContent className="flex-1">
-        <p className="text-sm text-[var(--foreground)] line-clamp-5">
-          {job.description}
-        </p>
-      </CardContent>
+      {/* Remove CardContent for description */}
+
       <CardFooter className="justify-end">
         {job.applyUrl && (
           <Button
@@ -89,7 +132,7 @@ export function Post({ job }: JobPostCardProps) {
               href={job.applyUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()} // Prevents opening the modal
+              onClick={(e) => e.stopPropagation()}
               aria-label={`Apply now for ${job.title} at ${job.company}`}
             >
               Apply Now
