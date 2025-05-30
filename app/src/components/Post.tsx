@@ -35,13 +35,26 @@ export function Post({ job }: JobPostCardProps) {
     <Card
       className="
       shadow-md bg-[var(--card)] text-[var(--card-foreground)]
-      transition-colors h-[380px] flex flex-col justify-between
+      transition-colors h-[420px] flex flex-col justify-between
       hover:bg-[var(--accent)] hover:shadow-xl cursor-pointer
-      max-w-[285px] w-full mx-auto
+      max-w-[315px] w-full mx-auto
     "
     >
       <CardHeader>
-        <CardTitle>{job.title}</CardTitle>
+        <CardTitle
+          className="text-base font-bold leading-tight line-clamp-2 min-h-[2.7em]" // 2 lines height for consistency
+          style={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            minHeight: "2.7em", // adjust as needed for your font-size/line-height
+          }}
+          title={job.title}
+        >
+          {job.title}
+        </CardTitle>
         <CardDescription className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mt-2">
           <span className="font-medium">{job.company}</span>
           <span
@@ -100,9 +113,10 @@ export function Post({ job }: JobPostCardProps) {
         </div>
         {job.tags && job.tags.length > 0 && (
           <div
-            className="mt-2 flex flex-wrap gap-2"
+            className="mt-2 flex flex-wrap gap-2 items-start"
             style={{
               maxHeight: "55px", // ~3 rows for text-xs/py-0.5, adjust as needed
+              minHeight: "55px", // ensure constant height for consistency
               overflow: "hidden",
               position: "relative",
             }}
@@ -115,7 +129,6 @@ export function Post({ job }: JobPostCardProps) {
                 {tag}
               </span>
             ))}
-            {/* Removed gradient overlay */}
           </div>
         )}
       </CardHeader>
