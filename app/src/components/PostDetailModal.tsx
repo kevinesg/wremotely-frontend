@@ -64,6 +64,12 @@ export function PostDetailModal({
     ? formatDistanceToNow(new Date(job._created_at), { addSuffix: true })
     : undefined;
 
+  const tagsArray = Array.isArray(job?.tags)
+    ? job.tags
+    : typeof job?.tags === "string" && (job.tags as string).length > 0
+    ? (job.tags as string).split(",").map((t) => t.trim())
+    : [];
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 transition-opacity"
@@ -134,9 +140,9 @@ export function PostDetailModal({
             className="prose prose-sm max-w-none dark:prose-invert mb-4"
             dangerouslySetInnerHTML={{ __html: job?.description || "" }}
           />
-          {job?.tags && job.tags.length > 0 && (
+          {tagsArray.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
-              {job.tags.map((tag) => (
+              {tagsArray.map((tag) => (
                 <span
                   key={tag}
                   className="px-2 py-0.5 rounded bg-[var(--muted)] text-xs text-[var(--muted-foreground)] border border-[var(--border)]"
