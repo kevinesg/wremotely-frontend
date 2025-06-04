@@ -27,7 +27,7 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
     axios
       .get(
         `${
-          import.meta.env.VITE_API_URL || "https://api.wremotely.com/"
+          import.meta.env.VITE_API_URL || "https://api.wremotely.com"
         }/remote_jobs/`,
         {
           headers: {
