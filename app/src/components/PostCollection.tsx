@@ -4,7 +4,7 @@ import { mapJobToPost } from "@/lib/utils";
 import type { JobData } from "@/lib/types";
 import { Post } from "@/components/Post";
 import Fuse from "fuse.js";
-import jobsData from "../../data/transformed_data.json";
+import axios from "axios";
 
 const PAGE_SIZE = 12;
 
@@ -21,15 +21,34 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  // Fetch jobs from FastAPI backend
   useEffect(() => {
-    // No need to fetch, just use the imported data
-    const data = jobsData as JobData[];
-    data.sort(
-      (a: JobData, b: JobData) =>
-        new Date(b._created_at).getTime() - new Date(a._created_at).getTime()
-    );
-    setJobs(data);
-    setLoading(false);
+    setLoading(true);
+    axios
+      .get(
+        `${
+          import.meta.env.VITE_API_URL || "https://api.wremotely.com/"
+        }/remote_jobs/`,
+        {
+          headers: {
+            "x-api-key": import.meta.env.VITE_API_KEY,
+          },
+        }
+      )
+      .then((res) => {
+        const data = (res.data.jobs ?? res.data) as JobData[];
+        data.sort(
+          (a: JobData, b: JobData) =>
+            new Date(b._created_at).getTime() -
+            new Date(a._created_at).getTime()
+        );
+        setJobs(data);
+      })
+      .catch((_err) => {
+        // Optionally handle error
+        setJobs([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // Set up Fuse.js for fuzzy search
@@ -37,7 +56,7 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
     () =>
       new Fuse(jobs, {
         keys: ["job_title", "company_name", "tags"],
-        threshold: 0.4, // adjust for fuzziness
+        threshold: 0.4,
         includeScore: true,
       }),
     [jobs]
@@ -56,12 +75,12 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
       setTimeout(() => {
         setVisibleCount((v) => Math.min(v + PAGE_SIZE, filteredJobs.length));
         setIsLoadingMore(false);
-      }, 300); // simulate loading delay
+      }, 300);
     }
   }, [visibleCount, filteredJobs.length]);
 
   useEffect(() => {
-    setVisibleCount(PAGE_SIZE); // Reset pagination on new search
+    setVisibleCount(PAGE_SIZE);
   }, [search]);
 
   useEffect(() => {
@@ -101,14 +120,13 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
               <Post
                 job={{
                   ...mapJobToPost(job),
-                  createdAt: job._created_at, // pass createdAt for timeAgo
+                  createdAt: job._created_at,
                 }}
               />
             </button>
           ))}
         </div>
       </div>
-      {/* Sentinel div for Intersection Observer */}
       <div ref={sentinelRef} className="h-4"></div>
       {isLoadingMore && (
         <div className="flex justify-center my-6 text-sm text-muted-foreground">

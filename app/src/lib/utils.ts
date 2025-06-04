@@ -30,6 +30,24 @@ export function mapJobToPost(job: JobData) {
     salary = job.salary_max;
   }
 
+  // Fix tags: remove brackets and split by comma
+  let tags: string[] = [];
+  if (Array.isArray(job.tags)) {
+    tags = job.tags;
+  } else if (typeof job.tags === "string" && job.tags) {
+    let tagStr: string = job.tags;
+    if (
+      tagStr.startsWith("{") &&
+      tagStr.endsWith("}")
+    ) {
+      tagStr = tagStr.slice(1, -1);
+    }
+    tags = tagStr
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+
   return {
     title: job.job_title,
     company: job.company_name,
@@ -37,7 +55,7 @@ export function mapJobToPost(job: JobData) {
       ? job.required_location.join(", ")
       : job.required_location || "",
     salary,
-    tags: job.tags,
+    tags,
     description: plainDescription,
     applyUrl: job.apply_url || job.url,
     createdAt: job._created_at,
