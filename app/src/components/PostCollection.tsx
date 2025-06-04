@@ -28,12 +28,7 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
       .get(
         `${
           import.meta.env.VITE_API_URL || "https://api.wremotely.com"
-        }/remote_jobs/`,
-        {
-          headers: {
-            "x-api-key": import.meta.env.VITE_API_KEY,
-          },
-        }
+        }/remote_jobs/`
       )
       .then((res) => {
         const data = (res.data.jobs ?? res.data) as JobData[];
