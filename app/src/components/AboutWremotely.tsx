@@ -222,7 +222,7 @@ export const AboutWremotely: React.FC = () => {
                       <Linkedin className="h-5 w-5" />
                     </a>
                     <a
-                      href="https://github.com/kevinesg/wremotely-frontend"
+                      href="https://github.com/kevinesg/wremotely"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="GitHub"
