@@ -64,10 +64,16 @@ export function PostDetailModal({
     ? formatDistanceToNow(new Date(job._created_at), { addSuffix: true })
     : undefined;
 
+  // Parse tags: handle array, comma-separated string, or empty/invalid values
   const tagsArray = Array.isArray(job?.tags)
-    ? job.tags
-    : typeof job?.tags === "string" && (job.tags as string).length > 0
-    ? (job.tags as string).split(",").map((t) => t.trim())
+    ? job.tags.filter((t) => !!t && t !== "{}")
+    : typeof job?.tags === "string" &&
+      (job.tags as string).replace(/[{}]/g, "").trim().length > 0
+    ? (job.tags as string)
+        .replace(/[{}]/g, "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean)
     : [];
 
   return (
