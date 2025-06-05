@@ -24,11 +24,13 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
   // Fetch jobs from FastAPI backend
   useEffect(() => {
     setLoading(true);
+    const params = search.trim() ? { q: search.trim() } : {};
     axios
       .get(
         `${
           import.meta.env.VITE_API_URL || "https://api.wremotely.com"
-        }/remote_jobs/`
+        }/remote_jobs/`,
+        { params }
       )
       .then((res) => {
         const data = (res.data.jobs ?? res.data) as JobData[];
@@ -40,11 +42,10 @@ export function PostCollection({ search = "" }: PostCollectionProps) {
         setJobs(data);
       })
       .catch((_err) => {
-        // Optionally handle error
         setJobs([]);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [search]);
 
   // Set up Fuse.js for fuzzy search
   const fuse = useMemo(
